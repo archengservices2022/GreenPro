@@ -113,13 +113,12 @@ th { color:var(--muted); font-size:12px; background:#fbfcfb; text-transform:uppe
 .drawer-item.active, .drawer-item:hover { background:#0f7a47; color:#fff; }
 .drawer-icon { font-size:18px; width:22px; text-align:center; }
 .drawer-footer { margin-top:auto; padding-top:20px; border-top:1px solid rgba(255,255,255,.12); display:flex; gap:12px; align-items:center; }
-.desktop-only { display:block; }
 .mobile-only { display:none; }
 .brand-title { display:none; font-size:20px; font-weight:800; }
 .bt-green { color:#27d64f; }
 .bt-white { color:#fff; }
 .page-title { display:block; margin:0; font-size:23px; }
-.compact-metrics { display:grid; grid-template-columns:1fr 1fr; background:#fff; border-radius:14px; box-shadow:var(--shadow); border:1px solid var(--line); overflow:hidden; margin-bottom:16px; }
+.compact-metrics { grid-template-columns:1fr 1fr; background:#fff; border-radius:14px; box-shadow:var(--shadow); border:1px solid var(--line); overflow:hidden; margin-bottom:16px; }
 .cmcard { display:flex; align-items:center; gap:12px; padding:16px 14px; }
 .cmcard:nth-child(odd) { border-right:1px solid var(--line); }
 .cmcard:nth-child(n+3) { border-top:1px solid var(--line); }
