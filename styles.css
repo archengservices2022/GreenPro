@@ -103,8 +103,7 @@ th { color:var(--muted); font-size:12px; background:#fbfcfb; text-transform:uppe
   .topbar { height:60px; padding:0 14px; background:#06110f; border-bottom:0; color:#fff; display:grid; grid-template-columns:40px 1fr 40px; }
   .topbar::before { content:"☰"; width:34px; height:34px; display:grid; place-items:center; font-size:22px; color:#fff; }
   .topbar h1 { margin:0; text-align:center; font-size:0; line-height:1; }
-  .topbar h1::after { content:"GreenOps"; color:#fff; font-size:17px; font-weight:800; }
-  .topbar h1::first-letter { color:#27d64f; }
+  .topbar h1::after { content:"GreenOps"; font-size:17px; font-weight:800; background:linear-gradient(90deg,#27d64f 0 53%,#fff 53%); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .top-actions { justify-content:flex-end; }
   .top-actions .icon-btn { background:transparent; color:#fff; font-size:18px; }
   .weather { display:none; }
