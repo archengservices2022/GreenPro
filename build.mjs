@@ -3,14 +3,17 @@ import path from "node:path";
 
 const root = process.cwd();
 const dist = path.join(root, "dist");
+const publicDir = path.join(root, "public");
 const serverDir = path.join(dist, "server");
 const openaiDir = path.join(dist, ".openai");
 
 const read = (file) => readFile(path.join(root, file), "utf8");
 
 await rm(dist, { recursive: true, force: true });
+await rm(publicDir, { recursive: true, force: true });
 await mkdir(serverDir, { recursive: true });
 await mkdir(openaiDir, { recursive: true });
+await mkdir(publicDir, { recursive: true });
 
 const [indexHtml, appJs, stylesCss, manifest, hosting] = await Promise.all([
   read("index.html"),
@@ -47,3 +50,7 @@ export default {
 
 await writeFile(path.join(serverDir, "index.js"), server);
 await writeFile(path.join(openaiDir, "hosting.json"), hosting);
+await writeFile(path.join(publicDir, "index.html"), indexHtml);
+await writeFile(path.join(publicDir, "app.js"), appJs);
+await writeFile(path.join(publicDir, "styles.css"), stylesCss);
+await writeFile(path.join(publicDir, "manifest.webmanifest"), manifest);
