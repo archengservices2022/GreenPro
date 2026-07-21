@@ -57,10 +57,19 @@ function render(){
       <div class="sidebar-footer"><div class="avatar">JS</div><div><strong>John Smith</strong><div class="muted" style="color:#aac1b6">Owner</div></div></div>
     </aside>
     <main class="main">
-      <header class="topbar"><h1>${cap(currentView)}</h1><div class="top-actions"><span class="weather">⛅ 72°F · Partly cloudy</span><button class="secondary" id="crewMode">Crew View</button><button class="icon-btn" aria-label="Notifications">🔔</button></div></header>
+      <header class="topbar"><button class="ham-btn" id="openDrawer">☰</button><h1>${cap(currentView)}</h1><div class="top-actions"><span class="weather">⛅ 72°F · Partly cloudy</span><button class="secondary" id="crewMode">Crew View</button><button class="icon-btn" aria-label="Notifications">🔔</button></div></header>
       <section class="content">${viewTemplate()}</section>
     </main>
     <nav class="mobile-tabs"><button data-view="dashboard" class="${currentView==='dashboard'?'active':''}"><span>⌂</span>Dashboard</button><button data-view="schedule" class="${currentView==='schedule'?'active':''}"><span>▣</span>Schedule</button><button data-view="jobs" class="${currentView==='jobs'?'active':''}"><span>✓</span>Jobs</button><button data-view="crew" class="${currentView==='crew'?'active':''}"><span>👥</span>Crew</button><button data-view="settings" class="${currentView==='settings'?'active':''}"><span>⚙</span>Settings</button></nav>
+    <div class="drawer-overlay" id="drawerOverlay">
+      <aside class="mobile-drawer">
+        <div class="drawer-brand"><div class="brand-mark">🌱</div><span>GreenOps</span><button class="drawer-close" id="closeDrawer">✕</button></div>
+        <nav class="drawer-nav">
+          ${navItems.map(i=>`<button data-view="${i}" class="drawer-item${currentView===i?' active':''}"><span class="drawer-icon">${icons[i]}</span>${cap(i)}</button>`).join('')}
+        </nav>
+        <div class="drawer-footer"><div class="avatar">JS</div><div><strong>John Smith</strong><div class="muted" style="color:#aac1b6;font-size:12px">Owner</div></div></div>
+      </aside>
+    </div>
   </div>`;
   bind();
 }
@@ -156,6 +165,9 @@ function crewView(){ const j=state.jobs[0]; return `<div style="max-width:560px;
 
 function bind(){
   document.querySelectorAll('[data-view]').forEach(el=>el.onclick=()=>{ currentView=el.dataset.view; render(); });
+  document.getElementById('openDrawer')?.addEventListener('click',()=>document.getElementById('drawerOverlay')?.classList.add('open'));
+  document.getElementById('closeDrawer')?.addEventListener('click',()=>document.getElementById('drawerOverlay')?.classList.remove('open'));
+  document.getElementById('drawerOverlay')?.addEventListener('click',e=>{if(e.target.id==='drawerOverlay')e.target.classList.remove('open');});
   document.getElementById('crewMode')?.addEventListener('click',()=>{currentView='crewView';render();});
   document.querySelectorAll('[data-job]').forEach(el=>el.onclick=()=>{ selectedJob=state.jobs.find(j=>j.id==el.dataset.job)||state.jobs[0]; currentView='jobDetail'; render(); });
   document.getElementById('newJob')?.addEventListener('click',()=>openJobModal());
