@@ -7,33 +7,44 @@ const seed = {
     {id:5,name:'William Anderson',phone:'(615) 555-7880',email:'william@example.com',address:'246 Elm St, Franklin, TN',service:'Irrigation Inspection'}
   ],
   jobs: [
-    {id:1021,time:'8:00 AM',date:'2026-07-20',customer:'Mike Thompson',service:'Lawn Mowing',address:'123 Maple St, Franklin, TN',crew:'Mike Johnson',status:'progress',price:125},
-    {id:1022,time:'10:30 AM',date:'2026-07-20',customer:'Emily Davis',service:'Mulching',address:'456 Oak Dr, Franklin, TN',crew:'Sarah Williams',status:'scheduled',price:450},
-    {id:1023,time:'1:00 PM',date:'2026-07-20',customer:'Robert Johnson',service:'Hedge Trimming',address:'789 Pine Ln, Franklin, TN',crew:'Mike Johnson',status:'scheduled',price:185},
-    {id:1024,time:'3:30 PM',date:'2026-07-20',customer:'Jessica Wilson',service:'Spring Cleanup',address:'321 Cedar St, Franklin, TN',crew:'Sarah Williams',status:'scheduled',price:320},
-    {id:1025,time:'8:00 AM',date:'2026-07-21',customer:'William Anderson',service:'Irrigation Inspection',address:'246 Elm St, Franklin, TN',crew:'David Brown',status:'scheduled',price:160}
+    {id:1021,time:'8:00 AM',date:'2026-07-20',customer:'Mike Thompson',service:'Lawn Mowing',address:'123 Maple St, Franklin',crew:'Mike Johnson',status:'progress',price:125},
+    {id:1022,time:'10:30 AM',date:'2026-07-20',customer:'Emily Davis',service:'Mulching',address:'456 Oak Dr, Franklin',crew:'Sarah Williams',status:'progress',price:450},
+    {id:1023,time:'1:00 PM',date:'2026-07-20',customer:'Robert Johnson',service:'Hedge Trimming',address:'789 Pine Ln, Franklin',crew:'Mike Johnson',status:'progress',price:185},
+    {id:1024,time:'3:30 PM',date:'2026-07-20',customer:'Jessica Wilson',service:'Spring Cleanup',address:'321 Cedar St, Franklin',crew:'Sarah Williams',status:'scheduled',price:320},
+    {id:1025,time:'9:00 AM',date:'2026-07-20',customer:'William Anderson',service:'Irrigation Check',address:'246 Elm St, Franklin',crew:'David Brown',status:'scheduled',price:160},
+    {id:1026,time:'11:00 AM',date:'2026-07-20',customer:'Mike Thompson',service:'Leaf Removal',address:'123 Maple St, Franklin',crew:'James Lee',status:'scheduled',price:95},
+    {id:1027,time:'8:00 AM',date:'2026-07-21',customer:'William Anderson',service:'Irrigation Inspection',address:'246 Elm St, Franklin',crew:'David Brown',status:'scheduled',price:160},
+    {id:1028,time:'10:30 AM',date:'2026-07-21',customer:'Emily Davis',service:'Leaf Removal',address:'135 Birch Dr, Franklin',crew:'Sarah Williams',status:'scheduled',price:120}
   ],
   estimates: [
-    {id:'EST-1007',customer:'Emily Davis',service:'Landscape Bed Refresh',amount:3450,status:'pending'},
-    {id:'EST-1008',customer:'Mike Thompson',service:'Seasonal Lawn Plan',amount:1200,status:'pending'},
-    {id:'EST-1009',customer:'Robert Johnson',service:'Tree Trimming',amount:680,status:'paid'}
+    {id:'EST-1007',customer:'Emily Davis',service:'Landscape Bed Refresh',amount:1200,status:'pending'},
+    {id:'EST-1008',customer:'Mike Thompson',service:'Seasonal Lawn Plan',amount:850,status:'pending'},
+    {id:'EST-1009',customer:'Robert Johnson',service:'Tree Trimming',amount:680,status:'paid'},
+    {id:'EST-1010',customer:'Jessica Wilson',service:'Garden Design',amount:1500,status:'pending'},
+    {id:'EST-1011',customer:'William Anderson',service:'Irrigation System',amount:2200,status:'pending'}
   ],
   invoices: [
     {id:'INV-1003',customer:'Mike Thompson',amount:125,status:'paid',due:'Jul 18, 2026'},
-    {id:'INV-1004',customer:'Emily Davis',amount:450,status:'unpaid',due:'Jul 25, 2026'},
-    {id:'INV-1005',customer:'Robert Johnson',amount:185,status:'unpaid',due:'Jul 27, 2026'}
+    {id:'INV-1004',customer:'Emily Davis',amount:850,status:'unpaid',due:'Jul 25, 2026'},
+    {id:'INV-1005',customer:'Robert Johnson',amount:750,status:'unpaid',due:'Jul 27, 2026'},
+    {id:'INV-1006',customer:'Jessica Wilson',amount:550,status:'unpaid',due:'Jul 30, 2026'}
   ],
   crew: [
     {name:'Mike Johnson',role:'Team Leader',status:'Working',jobs:2},
     {name:'Sarah Williams',role:'Crew Member',status:'Working',jobs:2},
     {name:'David Brown',role:'Crew Member',status:'Working',jobs:1},
-    {name:'James Lee',role:'Crew Member',status:'Off',jobs:0}
+    {name:'James Lee',role:'Crew Member',status:'Working',jobs:1},
+    {name:'Chris Garcia',role:'Crew Member',status:'Working',jobs:2},
+    {name:'Rachel Kim',role:'Crew Member',status:'Off',jobs:0},
+    {name:'Tom Wilson',role:'Crew Member',status:'Working',jobs:1},
+    {name:'Lisa Chen',role:'Crew Member',status:'Working',jobs:1}
   ]
 };
 
 const state = JSON.parse(localStorage.getItem('greenops-data') || 'null') || seed;
 let currentView = 'dashboard';
 let selectedJob = state.jobs[0];
+let selectedJobTab = 'details';
 let toastTimer;
 
 const icons = {dashboard:'⌂',schedule:'▣',customers:'👥',estimates:'▤',jobs:'✓',invoices:'▧',crew:'♙',reports:'◫',settings:'⚙'};
@@ -57,10 +68,10 @@ function render(){
       <div class="sidebar-footer"><div class="avatar">JS</div><div><strong>John Smith</strong><div class="muted" style="color:#aac1b6">Owner</div></div></div>
     </aside>
     <main class="main">
-      <header class="topbar"><button class="ham-btn" id="openDrawer">☰</button><h1>${cap(currentView)}</h1><div class="top-actions"><span class="weather">⛅ 72°F · Partly cloudy</span><button class="secondary" id="crewMode">Crew View</button><button class="icon-btn" aria-label="Notifications">🔔</button></div></header>
+      <header class="topbar"><button class="ham-btn" id="openDrawer">☰</button><span class="brand-title"><span class="bt-green">Green</span><span class="bt-white">Ops</span></span><h1 class="page-title">${cap(currentView)}</h1><div class="top-actions"><span class="weather">⛅ 72°F · Partly cloudy</span><button class="secondary" id="crewMode">Crew View</button><button class="icon-btn" aria-label="Notifications">🔔</button></div></header>
       <section class="content">${viewTemplate()}</section>
     </main>
-    <nav class="mobile-tabs"><button data-view="dashboard" class="${currentView==='dashboard'?'active':''}"><span>⌂</span>Dashboard</button><button data-view="schedule" class="${currentView==='schedule'?'active':''}"><span>▣</span>Schedule</button><button data-view="jobs" class="${currentView==='jobs'?'active':''}"><span>✓</span>Jobs</button><button data-view="crew" class="${currentView==='crew'?'active':''}"><span>👥</span>Crew</button><button data-view="settings" class="${currentView==='settings'?'active':''}"><span>⚙</span>Settings</button></nav>
+    <nav class="mobile-tabs"><button data-view="dashboard" class="${currentView==='dashboard'?'active':''}"><span>⌂</span>Dashboard</button><button data-view="schedule" class="${currentView==='schedule'?'active':''}"><span>▣</span>Schedule</button><button id="mobileNewJob" class="fab-tab" aria-label="New Job"><span>+</span></button><button data-view="jobs" class="${currentView==='jobs'?'active':''}"><span>✓</span>Jobs</button><button id="mobileMore"><span>⋯</span>More</button></nav>
     <div class="drawer-overlay" id="drawerOverlay">
       <aside class="mobile-drawer">
         <div class="drawer-brand"><div class="brand-mark">🌱</div><span>GreenOps</span><button class="drawer-close" id="closeDrawer">✕</button></div>
@@ -92,23 +103,44 @@ function viewTemplate(){
 }
 
 function dashboard(){
-  const revenue=state.invoices.filter(x=>x.status==='paid').reduce((a,b)=>a+b.amount,0)+8435;
-  const today=state.jobs.filter(j=>j.date==='2026-07-20');
+  const revenue=state.invoices.filter(x=>x.status===’paid’).reduce((a,b)=>a+b.amount,0)+8435;
+  const today=state.jobs.filter(j=>j.date===’2026-07-20’);
+  const inProgress=today.filter(j=>j.status===’progress’).length;
+  const unpaid=state.invoices.filter(i=>i.status===’unpaid’);
+  const pending=state.estimates.filter(e=>e.status===’pending’);
+  const workingCrew=state.crew.filter(c=>c.status===’Working’).length;
+  const upcoming=state.jobs.filter(j=>j.date>’2026-07-20’).slice(0,3);
   return `
-    <div class="hero"><div><h2>Good morning, John!</h2><p>Here’s what is happening across your landscaping business today.</p></div><button class="primary" id="newJob">+ New Job</button></div>
-    <div class="metric-grid">
-      ${metric('Revenue This Week',money(revenue),'↑ 12% from last week','💲')}
-      ${metric("Today's Jobs",today.length,'3 in progress','📅')}
-      ${metric('Pending Estimates',state.estimates.filter(e=>e.status==='pending').length,money(3450),'🧾')}
-      ${metric('Unpaid Invoices',state.invoices.filter(i=>i.status==='unpaid').length,money(635),'📄')}
-      ${metric('Active Crew','3 / 4','crew members','👥','crew')}
+    <div class="hero"><div><h2>Good morning, John!</h2><p>Here’s what’s happening today.</p></div><button class="primary" id="newJob">+ New Job</button></div>
+    <div class="metric-grid desktop-only">
+      ${metric(‘Revenue This Week’,money(revenue),’↑ 12% from last week’,’💲’)}
+      ${metric("Today’s Jobs",today.length,inProgress+’ in progress’,’📅’)}
+      ${metric(‘Pending Estimates’,pending.length,money(pending.reduce((a,b)=>a+b.amount,0)),’🧾’)}
+      ${metric(‘Unpaid Invoices’,unpaid.length,money(unpaid.reduce((a,b)=>a+b.amount,0)),’📄’)}
+      ${metric(‘Active Crew’,workingCrew+’ / ‘+state.crew.length,’crew members’,’👥’,’crew’)}
+    </div>
+    <div class="compact-metrics mobile-only">
+      <div class="cmcard"><div class="cmcard-icon cm-green">📅</div><div><div class="cmcard-label">Today’s Jobs</div><div class="cmcard-value">${today.length}</div></div></div>
+      <div class="cmcard"><div class="cmcard-icon cm-blue">🕐</div><div><div class="cmcard-label">In Progress</div><div class="cmcard-value">${inProgress}</div></div></div>
+      <div class="cmcard"><div class="cmcard-icon cm-green">💵</div><div><div class="cmcard-label">Revenue</div><div class="cmcard-value">${money(revenue)}</div></div></div>
+      <div class="cmcard"><div class="cmcard-icon cm-red">📄</div><div><div class="cmcard-label">Unpaid</div><div class="cmcard-value">${unpaid.length}</div></div></div>
     </div>
     <div class="dashboard-grid">
-      <div class="card section-card"><div class="section-head"><h3>Today's Schedule</h3><button class="link-btn" data-view="schedule">View all</button></div><div class="list">
-        ${today.map(job=>`<div class="row schedule-row"><strong>${job.time}</strong><div><strong>${job.service}</strong><div class="muted">${job.customer}</div></div><div class="muted address">${job.address}</div><span class="status ${job.status}">${job.status==='progress'?'In Progress':cap(job.status)}</span></div>`).join('')}
+      <div class="card section-card"><div class="section-head"><h3>Today’s Schedule</h3><button class="link-btn" data-view="schedule">View all</button></div><div class="list">
+        ${today.map(job=>`<div class="row schedule-row"><strong class="sched-time">${job.time}</strong><div><strong>${job.service}</strong><div class="muted sched-customer">${job.customer}</div><div class="muted sched-address">${job.address}</div></div><div class="muted address desktop-only">${job.address}</div><span class="status ${job.status}">${job.status===’progress’?’In Progress’:cap(job.status)}</span></div>`).join(‘’)}
+      </div><button class="link-btn section-footer-link" data-view="schedule">View Full Schedule →</button></div>
+      <div class="card section-card desktop-only"><div class="section-head"><h3>Crew Status</h3><button class="link-btn" data-view="crew">View all</button></div><div class="list">
+        ${state.crew.map(c=>`<div class="row crew-row"><div class="avatar crew-av">${c.name.split(‘ ‘).map(x=>x[0]).join(‘’)}</div><div><strong>${c.name}</strong><div class="muted">${c.role}</div></div><span class="status ${c.status===’Working’?’progress’:’pending’}">${c.status}</span><span class="muted">${c.jobs} job${c.jobs!==1?’s’:’’}</span></div>`).join(‘’)}
+      </div><button class="link-btn section-footer-link" data-view="crew">Manage Crew →</button></div>
+    </div>
+    <div class="dashboard-grid desktop-only second-row">
+      <div class="card section-card"><div class="section-head"><h3>Upcoming Jobs</h3><button class="link-btn" data-view="jobs">View all</button></div><div class="list">
+        ${upcoming.map(job=>`<div class="row upcoming-row"><div class="muted upcoming-when">Tomorrow, ${job.time}</div><strong>${job.service}</strong><div class="muted">${job.address}</div></div>`).join(‘’)}
       </div></div>
-      <div class="card section-card"><div class="section-head"><h3>Crew Status</h3><button class="link-btn" data-view="crew">Manage crew</button></div><div class="list">
-        ${state.crew.map((c,i)=>`<div class="row crew-row"><div class="avatar">${c.name.split(' ').map(x=>x[0]).join('')}</div><div><strong>${c.name}</strong><div class="muted">${c.role}</div></div><span class="status ${c.status==='Working'?'progress':'pending'}">${c.status}</span><span class="muted">${c.jobs} jobs</span></div>`).join('')}
+      <div class="card section-card"><div class="section-head"><h3>Recent Activity</h3></div><div class="list">
+        <div class="row activity-row"><span class="act-dot green-dot">$</span><span>Invoice #INV-1003 was paid</span></div>
+        <div class="row activity-row"><span class="act-dot gold-dot">📋</span><span>Estimate #EST-1007 was approved</span></div>
+        <div class="row activity-row"><span class="act-dot green-dot">✓</span><span>Job #JOB-1021 completed</span></div>
       </div></div>
     </div>`;
 }
@@ -160,8 +192,42 @@ function crew(){
 function reports(){ return `<div class="hero"><div><h2>Reports</h2><p>Simple business performance for the current month.</p></div><button class="secondary">Download CSV</button></div><div class="metric-grid">${metric('Monthly Revenue',money(12680),'↑ 9.4%','💲')}${metric('Jobs Completed','84','↑ 11 jobs','✓')}${metric('Average Job',money(151),'Across all services','📊')}${metric('Repeat Customers','72%','Strong retention','↻')}</div>`; }
 function settings(){ return `<div class="hero"><div><h2>Settings</h2><p>Update company information and workflow preferences.</p></div><button class="primary" id="saveSettings">Save Changes</button></div><div class="card section-card"><div class="form-grid"><div class="field"><label>Company Name</label><input value="GreenOps Landscaping"></div><div class="field"><label>Phone</label><input value="(314) 555-0199"></div><div class="field full"><label>Business Address</label><input value="St. Louis, Missouri"></div><div class="field"><label>Default Tax Rate</label><input value="8.25%"></div><div class="field"><label>Schedule Start Time</label><input value="7:00 AM"></div></div></div>`; }
 
-function jobDetail(){ const j=selectedJob; return `<div class="hero"><div><button class="link-btn" data-view="jobs">← Back to Jobs</button><h2>#JOB-${j.id} · ${j.service}</h2><p>${j.customer} · ${j.address}</p></div><span class="status ${j.status}">${j.status==='progress'?'In Progress':cap(j.status)}</span></div><div class="job-detail-grid"><div class="card section-card"><div class="section-head"><h3>Job Details</h3></div><div class="detail-list"><div class="detail-item"><span class="muted">Customer</span><strong>${j.customer}</strong></div><div class="detail-item"><span class="muted">Service</span><strong>${j.service}</strong></div><div class="detail-item"><span class="muted">Date</span><strong>${j.date} at ${j.time}</strong></div><div class="detail-item"><span class="muted">Assigned Crew</span><strong>${j.crew}</strong></div><div class="detail-item"><span class="muted">Price</span><strong>${money(j.price)}</strong></div></div></div><div class="card section-card checklist"><div class="section-head"><h3>Checklist</h3></div><label><input type="checkbox" checked> Mow front yard</label><label><input type="checkbox" checked> Mow backyard</label><label><input type="checkbox"> Edge all areas</label><label><input type="checkbox"> Blow off driveway and walkways</label><div style="display:flex;gap:10px;margin-top:16px"><button class="secondary">Add Photos</button><button class="primary" id="completeJob">Complete Job</button></div></div></div>`; }
-function crewView(){ const j=state.jobs[0]; return `<div style="max-width:560px;margin:auto"><div class="hero"><div><h2>My Jobs Today</h2><p>Monday, July 20</p></div><span class="status progress">3 Assigned</span></div><div class="card section-card"><div class="section-head"><div><h3>${j.service}</h3><div class="muted">${j.address}</div></div><span class="status progress">In Progress</span></div><div class="detail-list"><div class="detail-item"><span class="muted">Customer</span><strong>${j.customer}</strong></div><div class="detail-item"><span class="muted">Time</span><strong>${j.time}</strong></div><div class="detail-item"><span class="muted">Crew Lead</span><strong>${j.crew}</strong></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px"><button class="primary">Start Job</button><button class="secondary">Navigate</button></div></div><div class="card section-card checklist" style="margin-top:14px"><h3>Checklist</h3><label><input type="checkbox" checked> Mow front yard</label><label><input type="checkbox" checked> Mow backyard</label><label><input type="checkbox"> Edge all areas</label><label><input type="checkbox"> Blow off walkways</label><button class="primary" style="width:100%;margin-top:14px">Upload Before/After Photos</button></div></div>`; }
+function jobDetail(){
+  const j=selectedJob;
+  const tab=selectedJobTab;
+  return `
+    <div class="hero"><div><button class="link-btn" data-view="jobs">← Back to Jobs</button><h2>#JOB-${j.id} · ${j.service}</h2><p>${j.customer} · ${j.address}</p></div><div style="display:flex;align-items:center;gap:8px"><span class="status ${j.status}">${j.status==='progress'?'In Progress':cap(j.status)}</span></div></div>
+    <div class="job-tabs">
+      <button class="tab-btn${tab==='details'?' tab-active':''}" data-tab="details">Details</button>
+      <button class="tab-btn${tab==='checklist'?' tab-active':''}" data-tab="checklist">Checklist</button>
+      <button class="tab-btn${tab==='photos'?' tab-active':''}" data-tab="photos">Photos</button>
+      <button class="tab-btn${tab==='notes'?' tab-active':''}" data-tab="notes">Notes</button>
+      <button class="tab-btn${tab==='time'?' tab-active':''}" data-tab="time">Time</button>
+    </div>
+    ${tab==='details'?`<div class="card section-card"><div class="detail-list"><div class="detail-item"><span class="muted">Customer</span><strong>${j.customer}</strong></div><div class="detail-item"><span class="muted">Property</span><strong>${j.address}</strong></div><div class="detail-item"><span class="muted">Service</span><strong>${j.service}</strong></div><div class="detail-item"><span class="muted">Date</span><strong>${j.date}</strong></div><div class="detail-item"><span class="muted">Time</span><strong>${j.time}</strong></div><div class="detail-item"><span class="muted">Assigned Crew</span><strong>${j.crew}</strong></div><div class="detail-item"><span class="muted">Price</span><strong>${money(j.price)}</strong></div></div></div>`
+    :tab==='checklist'?`<div class="card section-card checklist"><label><input type="checkbox" checked> Mow front yard</label><label><input type="checkbox" checked> Mow backyard</label><label><input type="checkbox"> Edge all areas</label><label><input type="checkbox"> Blow off driveway and walkways</label></div>`
+    :`<div class="card section-card empty">No ${tab} yet.</div>`}
+    <div class="job-action-bar"><button class="secondary">Start Break</button><button class="primary" id="completeJob">Complete Job</button></div>`;
+}
+function crewView(){
+  const j=state.jobs[0];
+  return `<div class="crew-view-shell">
+    <div class="cv-topbar"><button class="link-btn cv-back" data-view="dashboard">‹</button><span class="cv-title">My Job</span><span class="status progress cv-status">In Progress</span><button class="icon-btn cv-add">+</button></div>
+    <div class="cv-content">
+      <div class="card cv-card"><h2 class="cv-job-title">${j.service}</h2><p class="muted cv-addr">${j.address}, TN</p>
+        <div class="cv-actions"><button class="primary cv-start">Start Job</button><button class="secondary cv-nav-btn">▶ Navigate</button></div>
+        <div class="cv-tabs"><button class="tab-btn tab-active">Details</button><button class="tab-btn">Checklist</button><button class="tab-btn">Photos</button><button class="tab-btn">Notes</button></div>
+        <div class="cv-checklist">
+          <label class="cv-check"><span class="cv-circle done">✓</span>Mow front yard</label>
+          <label class="cv-check"><span class="cv-circle done">✓</span>Mow backyard</label>
+          <label class="cv-check"><span class="cv-circle"></span>Edge all areas</label>
+          <label class="cv-check"><span class="cv-circle"></span>Blow off driveway and walkways</label>
+        </div>
+      </div>
+    </div>
+    <nav class="cv-nav"><button class="active"><span>⌂</span>Today</button><button data-view="jobs"><span>▤</span>My Jobs</button><button data-view="schedule"><span>▣</span>Schedule</button><button id="mobileMore2"><span>⋯</span>More</button></nav>
+  </div>`;
+}
 
 function bind(){
   document.querySelectorAll('[data-view]').forEach(el=>el.onclick=()=>{ currentView=el.dataset.view; render(); });
@@ -171,6 +237,10 @@ function bind(){
   document.getElementById('crewMode')?.addEventListener('click',()=>{currentView='crewView';render();});
   document.querySelectorAll('[data-job]').forEach(el=>el.onclick=()=>{ selectedJob=state.jobs.find(j=>j.id==el.dataset.job)||state.jobs[0]; currentView='jobDetail'; render(); });
   document.getElementById('newJob')?.addEventListener('click',()=>openJobModal());
+  document.getElementById('mobileNewJob')?.addEventListener('click',()=>openJobModal());
+  document.getElementById('mobileMore')?.addEventListener('click',()=>document.getElementById('drawerOverlay')?.classList.add('open'));
+  document.getElementById('mobileMore2')?.addEventListener('click',()=>document.getElementById('drawerOverlay')?.classList.add('open'));
+  document.querySelectorAll('[data-tab]').forEach(el=>el.onclick=()=>{ selectedJobTab=el.dataset.tab; render(); });
   document.getElementById('newCustomer')?.addEventListener('click',()=>openCustomerModal());
   document.getElementById('customerSearch')?.addEventListener('input',e=>{ const q=e.target.value.toLowerCase(); document.getElementById('customerRows').innerHTML=customerRows(state.customers.filter(c=>Object.values(c).join(' ').toLowerCase().includes(q))); });
   document.getElementById('completeJob')?.addEventListener('click',()=>{selectedJob.status='paid';save();showToast('Job marked complete');currentView='jobs';render();});
