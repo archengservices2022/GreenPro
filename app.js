@@ -105,39 +105,39 @@ function viewTemplate(){
 }
 
 function dashboard(){
-  const revenue=state.invoices.filter(x=>x.status===’paid’).reduce((a,b)=>a+b.amount,0)+8435;
-  const today=state.jobs.filter(j=>j.date===’2026-07-20’);
-  const inProgress=today.filter(j=>j.status===’progress’).length;
-  const unpaid=state.invoices.filter(i=>i.status===’unpaid’);
-  const pending=state.estimates.filter(e=>e.status===’pending’);
-  const workingCrew=state.crew.filter(c=>c.status===’Working’).length;
-  const upcoming=state.jobs.filter(j=>j.date>’2026-07-20’).slice(0,3);
+  const revenue=state.invoices.filter(x=>x.status==='paid').reduce((a,b)=>a+b.amount,0)+8435;
+  const today=state.jobs.filter(j=>j.date==='2026-07-20');
+  const inProgress=today.filter(j=>j.status==='progress').length;
+  const unpaid=state.invoices.filter(i=>i.status==='unpaid');
+  const pending=state.estimates.filter(e=>e.status==='pending');
+  const workingCrew=state.crew.filter(c=>c.status==='Working').length;
+  const upcoming=state.jobs.filter(j=>j.date>'2026-07-20').slice(0,3);
   return `
-    <div class="hero"><div><h2>Good morning, John!</h2><p>Here’s what’s happening today.</p></div><button class="primary" id="newJob">+ New Job</button></div>
+    <div class="hero"><div><h2>Good morning, John!</h2><p>Here's what's happening today.</p></div><button class="primary" id="newJob">+ New Job</button></div>
     <div class="metric-grid desktop-only">
-      ${metric(‘Revenue This Week’,money(revenue),’↑ 12% from last week’,’💲’)}
-      ${metric("Today’s Jobs",today.length,inProgress+’ in progress’,’📅’)}
-      ${metric(‘Pending Estimates’,pending.length,money(pending.reduce((a,b)=>a+b.amount,0)),’🧾’)}
-      ${metric(‘Unpaid Invoices’,unpaid.length,money(unpaid.reduce((a,b)=>a+b.amount,0)),’📄’)}
-      ${metric(‘Active Crew’,workingCrew+’ / ‘+state.crew.length,’crew members’,’👥’,’crew’)}
+      ${metric('Revenue This Week',money(revenue),'↑ 12% from last week','💲')}
+      ${metric("Today's Jobs",today.length,inProgress+' in progress','📅')}
+      ${metric('Pending Estimates',pending.length,money(pending.reduce((a,b)=>a+b.amount,0)),'🧾')}
+      ${metric('Unpaid Invoices',unpaid.length,money(unpaid.reduce((a,b)=>a+b.amount,0)),'📄')}
+      ${metric('Active Crew',workingCrew+' / '+state.crew.length,'crew members','👥','crew')}
     </div>
     <div class="compact-metrics mobile-only">
-      <div class="cmcard"><div class="cmcard-icon cm-green">📅</div><div><div class="cmcard-label">Today’s Jobs</div><div class="cmcard-value">${today.length}</div></div></div>
+      <div class="cmcard"><div class="cmcard-icon cm-green">📅</div><div><div class="cmcard-label">Today's Jobs</div><div class="cmcard-value">${today.length}</div></div></div>
       <div class="cmcard"><div class="cmcard-icon cm-blue">🕐</div><div><div class="cmcard-label">In Progress</div><div class="cmcard-value">${inProgress}</div></div></div>
       <div class="cmcard"><div class="cmcard-icon cm-green">💵</div><div><div class="cmcard-label">Revenue</div><div class="cmcard-value">${money(revenue)}</div></div></div>
       <div class="cmcard"><div class="cmcard-icon cm-red">📄</div><div><div class="cmcard-label">Unpaid</div><div class="cmcard-value">${unpaid.length}</div></div></div>
     </div>
     <div class="dashboard-grid">
-      <div class="card section-card"><div class="section-head"><h3>Today’s Schedule</h3><button class="link-btn" data-view="schedule">View all</button></div><div class="list">
-        ${today.map(job=>`<div class="row schedule-row"><strong class="sched-time">${job.time}</strong><div><strong>${job.service}</strong><div class="muted sched-customer">${job.customer}</div><div class="muted sched-address">${job.address}</div></div><div class="muted address desktop-only">${job.address}</div><span class="status ${job.status}">${job.status===’progress’?’In Progress’:cap(job.status)}</span></div>`).join(‘’)}
+      <div class="card section-card"><div class="section-head"><h3>Today's Schedule</h3><button class="link-btn" data-view="schedule">View all</button></div><div class="list">
+        ${today.map(job=>`<div class="row schedule-row"><strong class="sched-time">${job.time}</strong><div><strong>${job.service}</strong><div class="muted sched-customer">${job.customer}</div><div class="muted sched-address">${job.address}</div></div><div class="muted address desktop-only">${job.address}</div><span class="status ${job.status}">${job.status==='progress'?'In Progress':cap(job.status)}</span></div>`).join('')}
       </div><button class="link-btn section-footer-link" data-view="schedule">View Full Schedule →</button></div>
       <div class="card section-card desktop-only"><div class="section-head"><h3>Crew Status</h3><button class="link-btn" data-view="crew">View all</button></div><div class="list">
-        ${state.crew.map(c=>`<div class="row crew-row"><div class="avatar crew-av">${c.name.split(‘ ‘).map(x=>x[0]).join(‘’)}</div><div><strong>${c.name}</strong><div class="muted">${c.role}</div></div><span class="status ${c.status===’Working’?’progress’:’pending’}">${c.status}</span><span class="muted">${c.jobs} job${c.jobs!==1?’s’:’’}</span></div>`).join(‘’)}
+        ${state.crew.map(c=>`<div class="row crew-row"><div class="avatar crew-av">${c.name.split(' ').map(x=>x[0]).join('')}</div><div><strong>${c.name}</strong><div class="muted">${c.role}</div></div><span class="status ${c.status==='Working'?'progress':'pending'}">${c.status}</span><span class="muted">${c.jobs} job${c.jobs!==1?'s':''}</span></div>`).join('')}
       </div><button class="link-btn section-footer-link" data-view="crew">Manage Crew →</button></div>
     </div>
     <div class="dashboard-grid desktop-only second-row">
       <div class="card section-card"><div class="section-head"><h3>Upcoming Jobs</h3><button class="link-btn" data-view="jobs">View all</button></div><div class="list">
-        ${upcoming.map(job=>`<div class="row upcoming-row"><div class="muted upcoming-when">Tomorrow, ${job.time}</div><strong>${job.service}</strong><div class="muted">${job.address}</div></div>`).join(‘’)}
+        ${upcoming.map(job=>`<div class="row upcoming-row"><div class="muted upcoming-when">Tomorrow, ${job.time}</div><strong>${job.service}</strong><div class="muted">${job.address}</div></div>`).join('')}
       </div></div>
       <div class="card section-card"><div class="section-head"><h3>Recent Activity</h3></div><div class="list">
         <div class="row activity-row"><span class="act-dot green-dot">$</span><span>Invoice #INV-1003 was paid</span></div>
