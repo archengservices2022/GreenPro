@@ -60,7 +60,7 @@ function render(){
       <header class="topbar"><h1>${cap(currentView)}</h1><div class="top-actions"><span class="weather">⛅ 72°F · Partly cloudy</span><button class="secondary" id="crewMode">Crew View</button><button class="icon-btn" aria-label="Notifications">🔔</button></div></header>
       <section class="content">${viewTemplate()}</section>
     </main>
-    <nav class="mobile-tabs"><button data-view="dashboard" class="${currentView==='dashboard'?'active':''}"><span>⌂</span>Dashboard</button><button data-view="schedule" class="${currentView==='schedule'?'active':''}"><span>▣</span>Schedule</button><button id="mobileNewJob" class="fab-tab" aria-label="New Job"><span>+</span></button><button data-view="jobs" class="${currentView==='jobs'?'active':''}"><span>▤</span>Jobs</button><button data-view="settings" class="${currentView==='settings'?'active':''}"><span>•••</span>More</button></nav>
+    <nav class="mobile-tabs"><button data-view="dashboard" class="${currentView==='dashboard'?'active':''}"><span>⌂</span>Dashboard</button><button data-view="schedule" class="${currentView==='schedule'?'active':''}"><span>▣</span>Schedule</button><button data-view="jobs" class="${currentView==='jobs'?'active':''}"><span>✓</span>Jobs</button><button data-view="customers" class="${currentView==='customers'?'active':''}"><span>👥</span>Customers</button><button data-view="settings" class="${currentView==='settings'?'active':''}"><span>⚙</span>Settings</button></nav>
   </div>`;
   bind();
 }
@@ -141,7 +141,6 @@ function bind(){
   document.getElementById('crewMode')?.addEventListener('click',()=>{currentView='crewView';render();});
   document.querySelectorAll('[data-job]').forEach(el=>el.onclick=()=>{ selectedJob=state.jobs.find(j=>j.id==el.dataset.job)||state.jobs[0]; currentView='jobDetail'; render(); });
   document.getElementById('newJob')?.addEventListener('click',()=>openJobModal());
-  document.getElementById('mobileNewJob')?.addEventListener('click',()=>openJobModal());
   document.getElementById('newCustomer')?.addEventListener('click',()=>openCustomerModal());
   document.getElementById('customerSearch')?.addEventListener('input',e=>{ const q=e.target.value.toLowerCase(); document.getElementById('customerRows').innerHTML=customerRows(state.customers.filter(c=>Object.values(c).join(' ').toLowerCase().includes(q))); });
   document.getElementById('completeJob')?.addEventListener('click',()=>{selectedJob.status='paid';save();showToast('Job marked complete');currentView='jobs';render();});
@@ -153,25 +152,6 @@ function openJobModal(){
   document.body.appendChild(wrap); wrap.onclick=e=>{if(e.target===wrap)wrap.remove()}; wrap.querySelector('#cancelModal').onclick=()=>wrap.remove();
   wrap.querySelector('#jobForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);const customer=state.customers.find(c=>c.name===f.get('customer'));state.jobs.push({id:Math.max(...state.jobs.map(j=>j.id))+1,time:f.get('time'),date:f.get('date'),customer:f.get('customer'),service:f.get('service'),address:customer.address,crew:f.get('crew'),status:'scheduled',price:Number(f.get('price'))});save();wrap.remove();showToast('Job created');render();};
 }
-function mobileExpectedDashboard(){
-  const today = state.jobs.filter(j => j.date === '2026-07-20').slice(0, 3);
-  const revenue = state.invoices.filter(x => x.status === 'paid').reduce((a, b) => a + b.amount, 0) + 8435;
-  return `
-    <div class="hero"><div><h2>Good morning, John!</h2><p>Here's what's happening today.</p></div><button class="primary" id="newJob">+ New Job</button></div>
-    <div class="metric-grid">
-      ${metric("Today's Jobs", 6, '', '▣')}
-      ${metric('In Progress', 3, '', '◴')}
-      ${metric('Revenue', money(revenue), '', '$')}
-      ${metric('Unpaid', 3, '', '▤')}
-    </div>
-    <div class="dashboard-grid">
-      <div class="card section-card"><div class="section-head"><h3>Today's Schedule</h3><button class="link-btn" data-view="schedule">View all</button></div><div class="list">
-        ${today.map(job => `<div class="row schedule-row"><strong>${job.time}</strong><div><strong>${job.service}</strong><div class="muted address-inline">${job.address}</div></div><span class="status ${job.status}">${job.status === 'progress' ? 'In Progress' : cap(job.status)}</span></div>`).join('')}
-      </div></div>
-    </div>`;
-}
-
-dashboard = mobileExpectedDashboard;
 
 function openCustomerModal(){
   const wrap=document.createElement('div'); wrap.className='modal-backdrop'; wrap.innerHTML=`<div class="modal"><h3>Add Customer</h3><form id="customerForm"><div class="form-grid"><div class="field"><label>Name</label><input name="name" required></div><div class="field"><label>Phone</label><input name="phone" required></div><div class="field"><label>Email</label><input name="email" type="email"></div><div class="field"><label>Primary Service</label><input name="service" value="Lawn Mowing"></div><div class="field full"><label>Property Address</label><input name="address" required></div></div><div class="modal-actions"><button type="button" class="secondary" id="cancelModal">Cancel</button><button class="primary">Add Customer</button></div></form></div>`;
