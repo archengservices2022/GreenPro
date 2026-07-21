@@ -41,7 +41,9 @@ const seed = {
   ]
 };
 
-const state = JSON.parse(localStorage.getItem('greenops-data') || 'null') || seed;
+const SEED_VERSION = 3;
+const stored = JSON.parse(localStorage.getItem('greenops-data') || 'null');
+const state = (stored && stored._v === SEED_VERSION) ? stored : {...seed, _v: SEED_VERSION};
 let currentView = 'dashboard';
 let selectedJob = state.jobs[0];
 let selectedJobTab = 'details';
