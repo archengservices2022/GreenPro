@@ -63,6 +63,12 @@ button { cursor: pointer; }
 .status.unpaid { background:#ffe8ec; color:#b52e47; }
 .status.paid { background:#e5f7eb; color:#16713f; }
 .crew-row { grid-template-columns:auto 1fr auto auto; }
+.crew-cards { display:grid; gap:12px; }
+.crew-member-card { display:flex; align-items:center; gap:16px; padding:18px; }
+.cmc-avatar { width:50px; height:50px; border-radius:50%; background:var(--green-soft); display:grid; place-items:center; font-weight:700; color:var(--green); font-size:17px; flex-shrink:0; }
+.cmc-info { flex:1; min-width:0; display:flex; flex-direction:column; gap:4px; }
+.cmc-info strong { font-size:16px; }
+.cmc-right { display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0; }
 .muted { color:var(--muted); font-size:13px; }
 .table-card { overflow:hidden; }
 .table-tools { display:flex; gap:10px; padding:16px; border-bottom:1px solid var(--line); }

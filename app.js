@@ -60,7 +60,7 @@ function render(){
       <header class="topbar"><h1>${cap(currentView)}</h1><div class="top-actions"><span class="weather">⛅ 72°F · Partly cloudy</span><button class="secondary" id="crewMode">Crew View</button><button class="icon-btn" aria-label="Notifications">🔔</button></div></header>
       <section class="content">${viewTemplate()}</section>
     </main>
-    <nav class="mobile-tabs"><button data-view="dashboard" class="${currentView==='dashboard'?'active':''}"><span>⌂</span>Dashboard</button><button data-view="schedule" class="${currentView==='schedule'?'active':''}"><span>▣</span>Schedule</button><button data-view="jobs" class="${currentView==='jobs'?'active':''}"><span>✓</span>Jobs</button><button data-view="customers" class="${currentView==='customers'?'active':''}"><span>👥</span>Customers</button><button data-view="settings" class="${currentView==='settings'?'active':''}"><span>⚙</span>Settings</button></nav>
+    <nav class="mobile-tabs"><button data-view="dashboard" class="${currentView==='dashboard'?'active':''}"><span>⌂</span>Dashboard</button><button data-view="schedule" class="${currentView==='schedule'?'active':''}"><span>▣</span>Schedule</button><button data-view="jobs" class="${currentView==='jobs'?'active':''}"><span>✓</span>Jobs</button><button data-view="crew" class="${currentView==='crew'?'active':''}"><span>👥</span>Crew</button><button data-view="settings" class="${currentView==='settings'?'active':''}"><span>⚙</span>Settings</button></nav>
   </div>`;
   bind();
 }
@@ -92,7 +92,7 @@ function dashboard(){
       ${metric("Today's Jobs",today.length,'3 in progress','📅')}
       ${metric('Pending Estimates',state.estimates.filter(e=>e.status==='pending').length,money(3450),'🧾')}
       ${metric('Unpaid Invoices',state.invoices.filter(i=>i.status==='unpaid').length,money(635),'📄')}
-      ${metric('Active Crew','3 / 4','crew members','👥')}
+      ${metric('Active Crew','3 / 4','crew members','👥','crew')}
     </div>
     <div class="dashboard-grid">
       <div class="card section-card"><div class="section-head"><h3>Today's Schedule</h3><button class="link-btn" data-view="schedule">View all</button></div><div class="list">
@@ -103,7 +103,7 @@ function dashboard(){
       </div></div>
     </div>`;
 }
-function metric(label,value,sub,icon){ return `<div class="card metric"><div class="label">${label}</div><div class="value">${value}</div><div class="sub">${sub}</div><div class="bubble">${icon}</div></div>`; }
+function metric(label,value,sub,icon,view){ const a=view?` data-view="${view}" style="cursor:pointer"`:''; return `<div class="card metric"${a}><div class="label">${label}</div><div class="value">${value}</div><div class="sub">${sub}</div><div class="bubble">${icon}</div></div>`; }
 
 function customers(){
   return `<div class="hero"><div><h2>Customers</h2><p>Manage customers, properties, and service history.</p></div><button class="primary" id="newCustomer">+ Add Customer</button></div>
@@ -129,7 +129,25 @@ function jobs(){
 function estimates(){ return simpleTable('Estimates','Create and track landscaping estimates.','+ New Estimate',['Estimate','Customer','Service','Amount','Status'],state.estimates.map(e=>[`<strong>${e.id}</strong>`,e.customer,e.service,money(e.amount),`<span class="status ${e.status}">${cap(e.status)}</span>`])); }
 function invoices(){ return simpleTable('Invoices','Track billing and payment status.','+ New Invoice',['Invoice','Customer','Due Date','Amount','Status'],state.invoices.map(i=>[`<strong>${i.id}</strong>`,i.customer,i.due,money(i.amount),`<span class="status ${i.status}">${cap(i.status)}</span>`])); }
 function simpleTable(title,sub,button,headers,rows){ return `<div class="hero"><div><h2>${title}</h2><p>${sub}</p></div><button class="primary">${button}</button></div><div class="card table-card"><table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`; }
-function crew(){ return `<div class="hero"><div><h2>Crew</h2><p>Manage team availability and daily assignments.</p></div><button class="primary">+ Add Crew Member</button></div><div class="metric-grid">${state.crew.map(c=>`<div class="card metric"><div class="avatar">${c.name.split(' ').map(x=>x[0]).join('')}</div><div class="value" style="font-size:18px">${c.name}</div><div class="sub">${c.role} · ${c.jobs} jobs today</div><div class="bubble">${c.status==='Working'?'✓':'–'}</div></div>`).join('')}</div>`; }
+function crew(){
+  const working=state.crew.filter(c=>c.status==='Working').length;
+  return `
+    <div class="hero"><div><h2>Crew Members</h2><p>${working} of ${state.crew.length} members working today.</p></div><button class="primary">+ Add Member</button></div>
+    <div class="crew-cards">
+      ${state.crew.map(c=>`
+        <div class="card crew-member-card">
+          <div class="cmc-avatar">${c.name.split(' ').map(x=>x[0]).join('')}</div>
+          <div class="cmc-info">
+            <strong>${c.name}</strong>
+            <span class="muted">${c.role}</span>
+          </div>
+          <div class="cmc-right">
+            <span class="status ${c.status==='Working'?'progress':'pending'}">${c.status}</span>
+            <span class="muted">${c.jobs} job${c.jobs!==1?'s':''} today</span>
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
 function reports(){ return `<div class="hero"><div><h2>Reports</h2><p>Simple business performance for the current month.</p></div><button class="secondary">Download CSV</button></div><div class="metric-grid">${metric('Monthly Revenue',money(12680),'↑ 9.4%','💲')}${metric('Jobs Completed','84','↑ 11 jobs','✓')}${metric('Average Job',money(151),'Across all services','📊')}${metric('Repeat Customers','72%','Strong retention','↻')}</div>`; }
 function settings(){ return `<div class="hero"><div><h2>Settings</h2><p>Update company information and workflow preferences.</p></div><button class="primary" id="saveSettings">Save Changes</button></div><div class="card section-card"><div class="form-grid"><div class="field"><label>Company Name</label><input value="GreenOps Landscaping"></div><div class="field"><label>Phone</label><input value="(314) 555-0199"></div><div class="field full"><label>Business Address</label><input value="St. Louis, Missouri"></div><div class="field"><label>Default Tax Rate</label><input value="8.25%"></div><div class="field"><label>Schedule Start Time</label><input value="7:00 AM"></div></div></div>`; }
 
