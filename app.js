@@ -121,11 +121,12 @@ function dashboard(){
       ${metric('Unpaid Invoices',unpaid.length,money(unpaid.reduce((a,b)=>a+b.amount,0)),'📄')}
       ${metric('Active Crew',workingCrew+' / '+state.crew.length,'crew members','👥','crew')}
     </div>
-    <div class="compact-metrics mobile-only">
-      <div class="cmcard"><div class="cmcard-icon cm-green">📅</div><div><div class="cmcard-label">Today's Jobs</div><div class="cmcard-value">${today.length}</div></div></div>
-      <div class="cmcard"><div class="cmcard-icon cm-blue">🕐</div><div><div class="cmcard-label">In Progress</div><div class="cmcard-value">${inProgress}</div></div></div>
-      <div class="cmcard"><div class="cmcard-icon cm-green">💵</div><div><div class="cmcard-label">Revenue</div><div class="cmcard-value">${money(revenue)}</div></div></div>
-      <div class="cmcard"><div class="cmcard-icon cm-red">📄</div><div><div class="cmcard-label">Unpaid</div><div class="cmcard-value">${unpaid.length}</div></div></div>
+    <div class="mob-metrics mobile-only">
+      <div class="mob-card"><div class="mob-card-top"><span class="mob-card-label">Revenue This Week</span><span class="mob-icon cm-green">$</span></div><div class="mob-card-value">${money(revenue)}</div><div class="mob-card-sub">↑ 12% from last week</div></div>
+      <div class="mob-card"><div class="mob-card-top"><span class="mob-card-label">Today's Jobs</span><span class="mob-icon cm-blue">📅</span></div><div class="mob-card-value">${today.length}</div><div class="mob-card-sub">${inProgress} in progress</div></div>
+      <div class="mob-card"><div class="mob-card-top"><span class="mob-card-label">Pending Estimates</span><span class="mob-icon cm-gold">🧾</span></div><div class="mob-card-value">${pending.length}</div><div class="mob-card-sub">${money(pending.reduce((a,b)=>a+b.amount,0))}</div></div>
+      <div class="mob-card"><div class="mob-card-top"><span class="mob-card-label">Unpaid Invoices</span><span class="mob-icon cm-red">📄</span></div><div class="mob-card-value">${unpaid.length}</div><div class="mob-card-sub">${money(unpaid.reduce((a,b)=>a+b.amount,0))}</div></div>
+      <div class="mob-card mob-card-full" data-view="crew" style="cursor:pointer"><div class="mob-card-top"><span class="mob-card-label">Active Crew</span><span class="mob-icon cm-green">👥</span></div><div class="mob-card-value">${workingCrew} / ${state.crew.length}</div><div class="mob-card-sub">crew members</div></div>
     </div>
     <div class="dashboard-grid">
       <div class="card section-card"><div class="section-head"><h3>Today's Schedule</h3><button class="link-btn" data-view="schedule">View all</button></div><div class="list">
