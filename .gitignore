@@ -1,0 +1,13 @@
+dist/
+public/
+serviceKey.json
+servicekey.json
+backend/serviceKey.json
+backend/servicekey.json
+backend/.env
+backend/tools/
+backend/.secrets/
+.env
+.env.local
+node_modules/
+backend/greenops-service-account.json

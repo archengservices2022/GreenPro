@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0f5f3d" />
+  <title>GreenOps</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css?v=greenops-crew-status-schedule-edit-20260818" />
+</head>
+<body>
+  <div id="app"></div>
+
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.js"></script>
+
+  <!-- Firebase SDK (CDN) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+    import {
+      createUserWithEmailAndPassword,
+      getAuth,
+      onAuthStateChanged,
+      sendEmailVerification,
+      sendPasswordResetEmail,
+      signInWithEmailAndPassword,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDiYp3VEBFEO5HhWIgKbgKv76EDV194QrI",
+      authDomain: "greenops-bd61c.firebaseapp.com",
+      projectId: "greenops-bd61c",
+      storageBucket: "greenops-bd61c.firebasestorage.app",
+      messagingSenderId: "380485556931",
+      appId: "1:380485556931:web:e4f508b3c2da36d0ffa076",
+      measurementId: "G-W5384B8TKR"
+    };
+
+    try {
+      const app = initializeApp(firebaseConfig);
+      window.db = getFirestore(app);
+      const auth = getAuth(app);
+      await new Promise(resolve => {
+        const unsubscribe = onAuthStateChanged(auth, () => {
+          unsubscribe();
+          resolve();
+        }, resolve);
+      });
+      window.greenopsAuth = {
+        createAccount: async (email, password) => {
+          const credential = await createUserWithEmailAndPassword(auth, email, password);
+          let verificationEmailSent = true;
+          try {
+            const continueUrl = new URL(window.location.href);
+            continueUrl.search = "";
+            continueUrl.hash = "";
+            continueUrl.searchParams.set("registration", "complete");
+            await sendEmailVerification(credential.user, {url: continueUrl.toString()});
+          } catch (_) {
+            verificationEmailSent = false;
+          }
+          return { credential, verificationEmailSent };
+        },
+        signIn: async (email, password) => {
+          const credential = await signInWithEmailAndPassword(auth, email, password);
+          await credential.user.reload();
+          return credential;
+        },
+        sendCurrentVerification: () => auth.currentUser
+          ? sendEmailVerification(auth.currentUser)
+          : Promise.reject(new Error('No signed-in account is available.')),
+        sendPasswordReset: email => sendPasswordResetEmail(auth, email),
+        signOut: () => signOut(auth),
+        getToken: async () => auth.currentUser ? auth.currentUser.getIdToken() : '',
+        currentUser: () => auth.currentUser
+      };
+    await import("./app.js?v=greenops-all-calendar-schedule-table-20260819");
+    } catch (error) {
+      console.error('Firebase initialization error:', error);
+      document.getElementById('app').innerHTML = '<main class="auth-page"><section class="auth-card card"><h1>GreenOps unavailable</h1><p>Authentication could not start. Please check your connection and refresh.</p></section></main>';
+    }
+  </script>
+</body>
+</html>

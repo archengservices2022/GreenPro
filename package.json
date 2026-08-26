@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "npm run build && node dev.mjs",
+    "dev:frontend": "python -m http.server 8080",
+    "dev:backend": "npm --prefix backend start",
+    "start": "npm run dev"
+  }
+}
